@@ -1,8 +1,12 @@
 # V1Search #
 
-V1TaskManager is a task tray utility that allows you to view and update key 
-properties of tasks, tests, defects and stories. The utility also allows you to 
-take ownership of items as well as take effort and close items.
+The VersionOne Search (V1Search) is a stand-alone web application that 
+allows individuals across your organization to search for VersionOne 
+assets across all projects. V1Search is built on top of Lucene.NET, a 
+powerful open-source information retrieval engine. This technology 
+also supports a rich query parser that allows users to create queries 
+that mix terms, logical expressions, and wildcards to narrow their 
+searches.
 
 This product includes software developed at VersionOne 
 (http://versionone.com/). This product is open source and is licensed 
