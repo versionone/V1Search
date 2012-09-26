@@ -1,0 +1,36 @@
+p {
+	FONT-FAMILY: Arial, Helvetica, sans-serif
+}
+.closed {
+	text-decoration: line-through;
+}
+h1 {
+	font-family: Arial, Helvetica, sans-serif;
+}
+.summaryTable  { 
+	PADDING-RIGHT: 2px; 
+	BORDER-TOP: #191970 1px solid; 
+	padding: 3px; 
+	FONT-SIZE: 13pt; 
+	BACKGROUND-COLOR: #e5ecf9; 
+	width: 100%; 
+	margin-top: 10px;
+}
+.summaryData {
+	font-size: 10pt;
+	text-align: right;
+}
+a.link {
+	FONT-SIZE: 13pt
+}
+.sample {
+	FONT-SIZE: 10pt
+}
+.credits {
+	margin-top: 40px;
+	text-align: center;
+	font-size: 10pt;
+}
+.paging {
+	text-align: center;
+}

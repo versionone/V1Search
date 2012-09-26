@@ -1,0 +1,189 @@
+<project name='Search' default='compile'>
+	
+	<property name='project.name' value='${project::get-name()}' />
+	<property name='publish.dir' value='builds' unless="${property::exists('publish.dir')}" />
+	<property name='stage.dir' value='stage' unless="${property::exists('stage.dir')}" />
+	
+	<property name='build.version' value='0' unless="${property::exists('build.version')}" />
+	
+	<property name="doc.output.dir" value="doc"/>
+	<property name='doc.source.dir' value='DocSource'/>
+	
+	<property name='build.config' value='Debug' />
+	<target name='debug' description='Select Debug build'>
+		<property name='build.config' value='Debug' />
+	</target>
+	<target name='release' description='Select Release build'>
+		<property name='build.config' value='Release' />
+	</target>
+
+	<property name='msbuild.dir' value='..\Common\msbuild' />
+	<property name='msbuild.exe' value='MSBuild.exe' />
+
+	<target name='build' depends='clean compile gendoc package'/>
+	
+	<target name='stage'> <!-- depends='gendoc' -->
+		<call target='package.distro' /> 
+	</target>
+	
+	<!--== COMPILE ==-->
+	<target name='compile' description='Compile all projects'>
+		<exec program='${msbuild.exe}' commandline='${project.name}.sln /t:Rebuild /p:Configuration=${build.config} /v:q /consoleloggerparameters:NoSummary /nologo' basedir='${msbuild.dir}' verbose='true'/>
+	</target>
+
+	<target name='compile.clean'>
+		<exec program='${msbuild.exe}' commandline='${project.name}.sln /t:Clean /p:Configuration=${build.config} /v:q /consoleloggerparameters:NoSummary /nologo' basedir='${msbuild.dir}' verbose='true'/>
+	</target>
+	
+	<!--== GENDOC ==-->	
+	<target name='gendoc'>
+		<call target='gendoc.init'/>
+		<call target='gendoc.index'/>
+		<call target='gendoc.content'/>
+	</target>
+	
+	<target name='doc.clean'>
+		<delete dir="${doc.output.dir}"/>
+	</target>
+	
+	<target name='gendoc.init'>
+		<mkdir dir='${doc.output.dir}\Common' />
+		<copy todir='${doc.output.dir}\Common' file='${doc.source.dir}\Common\v1integration.css' />
+	</target>
+	
+	<target name='gendoc.index' description='Generate Documentation' depends='gendoc.init'>
+		<foreach item='File' property='filename'>
+			<in>
+				<items>
+					<include name='${doc.source.dir}\*.xml' />
+				</items>
+			</in>		
+			<do>
+				<property name='filename.noext' value="${path::get-file-name-without-extension(filename)}"/>
+				<exec basedir='..\Common\docbook\xsltproc\' program='xsltproc.exe' commandline='-o ${doc.output.dir}\${filename.noext}.html ${doc.source.dir}\Common\index.xsl ${filename}' />					
+			</do>
+		</foreach>
+	</target>
+	
+	<target name='gendoc.olink' description='Create target databases for the olink command' depends='gendoc.init'>
+		<property name='collect.xref.targets' value='only'/>
+		<call target='gendoc.content.base'/>
+	</target>
+	
+	<target name='gendoc.content' description='Generate documentation for the content pages' depends='gendoc.init,gendoc.olink'>
+		<property name='collect.xref.targets' value='no'/>	
+		<call target='gendoc.content.base'/>
+	</target>
+	
+	<target name='gendoc.content.base' depends='gendoc.init'>
+		<foreach item='Folder'  property='foldername'>
+			<in>
+				<items basedir='${doc.source.dir}'>
+					<include name='*'/>
+					<exclude name='Common'/>
+					<exclude name='.'/>					
+				</items>
+			</in>
+			<do>
+				<property name='content.doc.output.dir' value='${doc.output.dir}\${path::get-file-name(foldername)}'/>
+				<mkdir dir='${content.doc.output.dir}' />
+				<foreach item='File' property='filename'>
+					<in>
+						<items>
+							<include name='${foldername}/*.xml' />
+						</items>
+					</in>
+					<do>
+						<property name='filename.noext' value="${path::get-file-name-without-extension(filename)}"/>
+						<exec basedir='..\Common\docbook\xsltproc\' program='xsltproc.exe' commandline='-o ${content.doc.output.dir}\${filename.noext}.html --stringparam current.docid ${filename.noext} --stringparam target.database.document ${doc.source.dir}/Common/olinkdb.xml --stringparam collect.xref.targets ${collect.xref.targets} --stringparam targets.filename ${doc.source.dir}/Common/${filename.noext}.db ${doc.source.dir}\Common\v1integration.xsl ${filename}'  />
+					</do>
+				</foreach>
+			</do>
+		</foreach>						
+	</target>	
+
+	<target name='gendoc.clean'>
+		<delete dir='${doc.output.dir}' if='${directory::exists(doc.output.dir)}' failonerror='false' />
+	</target>
+	
+	<!--== PACKAGE ==-->
+	<target name='package' description='Create final package' depends='package.clean'>
+		<call target='package.distro' /> 
+		<call target='package.source' />
+	</target>
+
+	<target name='package.clean'>
+		<delete dir='${stage.dir}' if='${directory::exists(stage.dir)}' failonerror='false' />
+	</target>
+	
+	<target name='package.init'>
+		<property name='package.source.zipfile' value='${stage.dir}\V1Search.Source-${build.version}.zip' />
+		<property name='package.distro.zipfile' value='${stage.dir}\V1Search-${build.version}.zip' />
+		<mkdir dir='${stage.dir}' />
+	</target>
+
+<!--	<target name='cleanscc' description='Remove source control bindings from source code'>
+		<exec program='..\Common\VersionOne.CleanSCC.exe'>
+			<arg value='.' />
+		</exec>
+	</target>
+-->
+	<target name='cleanscc' description='Remove source control bindings from source code'/>
+
+	<target name='package.source' depends='package.init cleanscc'>
+		<property name='source.root' value='${stage.dir}/src'/>
+		<copy todir="${source.root}" file='search.sln'/>
+		<copy todir="${source.root}/V1Search">
+		    <fileset basedir="V1Search">
+				<exclude name='**\obj\**'/>
+				<exclude name='**\bin\**'/>
+				<include name='**\**'/>
+		    </fileset>
+		</copy>	
+		<copy todir="${source.root}/V1Extractor">
+		    <fileset basedir="V1Extractor">
+				<exclude name='**\obj\**'/>
+				<exclude name='**\bin\**'/>
+				<include name='**\**'/>
+		    </fileset>
+		</copy>	
+		<zip zipfile='${package.source.zipfile}'>
+			<fileset basedir='${stage.dir}/src'>
+				<include name='**\*' />
+			</fileset>
+		</zip>
+		<delete dir='${stage.dir}/src'/>
+	</target>
+
+	<target name='package.distro' depends='package.init'>
+		<copy todir="${stage.dir}/Web">
+		    <fileset basedir="V1Search">
+				<exclude name='**\obj\**' />
+				<exclude name='**\lib\**' />
+				<include name='**/*.aspx' />
+				<include name='**/*.htm' />
+				<include name='**/*.css' />
+				<include name='**/*.gif' />
+				<include name='**/*.dll' />
+				<include name='web.config' />				
+		    </fileset>
+		</copy>	
+		<copy todir="${stage.dir}/Extractor" flatten='true'>
+		    <fileset basedir="V1Extractor\bin\${build.config}">
+				<include name='*.exe' />
+				<include name='*.config' />
+				<include name='*.dll' />
+		    </fileset>
+		</copy>
+		<move todir="${stage.dir}/doc">
+			<fileset basedir='${doc.output.dir}'>
+				<include name='**/**' />
+			</fileset>
+		</move>
+	</target>
+
+	<!--== CLEAN ==-->
+	<target name='clean' description='Delete configuration-specific build results' depends='compile.clean package.clean doc.clean'>
+	</target>
+
+</project>
