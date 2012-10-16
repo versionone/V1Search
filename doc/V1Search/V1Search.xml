@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.3//EN" "../../../docbook-xml/docbookx.dtd"
+[
+<!ENTITY name "V1Search">
+]>
+<article id="v1search.user">
+	<title>VersionOne Search</title>
+	<section id="description">
+		<title>Description</title>
+		<para>
+			The VersionOne Search (&name;) is a standalone web application that allows individuals across your organization to search for VersionOne assets across all projects.  &name; is built on top of
+			<ulink
+				url="http://incubator.apache.org/lucene.net"
+			>Lucene.NET</ulink>, a powerful opensource information retrieval engine.  This technology also supports a rich query parser that allows users
+			to create queries that mix terms, logical expressions, and wildcards to narrow their searches.    
+		</para>
+	</section>
+	<section id="systemreqs">
+		<title>System Requirements</title>
+		<para>
+			VersionOne: 8.0 or above
+		</para>
+		<para>
+			Integration Server:
+			<itemizedlist>
+				<listitem>
+					<para>Operating System&mdash;Windows 2000, 2003</para>
+				</listitem>
+				<listitem>
+					<para>Framework&mdash;Microsoft .Net 2.0 Service Pack 1</para>
+				</listitem>
+				<listitem>
+					<para>Web Server&mdash;IIS 5 or IIS 6, with ASP.Net 2.0 Service Pack 1</para>
+				</listitem>
+			</itemizedlist>
+		</para>
+	</section>
+	<section id="installation">
+		<title>Installation</title>
+		<section id="install.location">
+			<title>1.  Determine Install Location</title>
+			<para>
+				&name;  can be installed on any web server that has internet access to your VersionOne instance. 
+				Exact placement should be determined by your internal software management requirements.  
+				The integation server must meet the <link
+					linkend="systemreqs">System Requirements</link> stated above.
+			</para>
+		</section>
+		<section id="install.install">
+			<title>2.  Install </title>
+			<orderedlist>
+				<listitem>
+					<para>Download the &name;  binary zip using the link above.</para>
+				</listitem>
+				<listitem>
+					<para>Extract the contents to a location on your web server.</para>
+				</listitem>
+				<listitem>
+					<para>Create a virtual directory in IIS that points to the folder you extracted the files to.</para>
+				</listitem>
+				<listitem>
+					<para>Ensure that the virtual directory is using ASP.Net 2.0 Service pack 1.</para>
+				</listitem>
+				<listitem>
+					<para>Ensure that the default document is index.htm</para>
+				</listitem>
+			</orderedlist>
+		</section>
+		<section id="install.testWeb">
+			<title>3.  Test the Web Application</title>
+			<para>At this point you'll want to ensure that the Web Application is working.  Open a web browser and navigate the the URL defined in step 2.  You should see the VersionOne Search web page.</para>
+		</section>
+		<section id="install.indexer">
+			<title>4. Index your VersionOne server</title>
+			<para>To index your server navigate the the Extractor subdirectory.  From this location, you need to modify the V1Extractor.exe.config file and provide your server connection information. The following table describes the 
+				parameters available to you in the configuration file.
+				<table
+					frame="none" id="install.configure.table">
+					<title>Requestor Configuration Parameters</title>
+					<tgroup cols="2">
+						<thead>
+							<row>
+								<entry>Parameter</entry>
+								<entry>Description</entry>
+							</row>
+						</thead>
+						<tbody>
+							<row>
+								<entry>V1Server</entry>
+								<entry>URL to the VersionOne server you wish to index</entry>
+							</row>
+							<row>
+								<entry>V1User</entry>
+								<entry>A valid VersionOne user in the system specifed by V1Server.  <emphasis>Note, that the index will only contain items this user has privileges to view.  Therefore, if you use someone like ‘admin’, then the index will contain everything.  Conversely, if you choose a user that is restricted to a given project or has “Inheritor” access, you index may contain no data. </emphasis></entry>
+							</row>
+							<row>
+								<entry>V1Password</entry>
+								<entry>Password for V1User</entry>
+							</row>
+							<row>
+								<entry>IndexDir</entry>
+								<entry>Location for storing Lucene index. </entry>
+							</row>
+						</tbody>
+					</tgroup>
+				</table>
+				Once configured, open a command prompt and run V1Extractor.exe. 
+			</para>
+			<section id="install.configure.optional">
+				<title>Optional Configuration</title>
+				<para>
+					Schedule regular extractions to keep the index uptodate.  This can be accomplished using windows scheduler.  We recommend that the extractions occur at a time when no one is using the system
+				</para>
+			</section>
+		</section>
+		<section id="install.test">
+			<title>4. Test the Application</title>
+			<orderedlist>
+				<listitem>
+					<para>
+						Access &name; through a web browser at the location you set up during installation and search for something. 
+					</para>
+				</listitem>
+			</orderedlist>
+		</section>
+	</section>
+	<section id="section.footer">
+		<title/>
+		<para>Copyright &copy; <?dbtimestamp format="Y"?>, VersionOne, Inc. All rights reserved. This document was generated <?dbtimestamp format="Y-m-d H:M:S"?>.</para>
+	</section>
+</article>

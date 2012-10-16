@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>VersionOne Search</title>
+<link rel="stylesheet" href="styles/help.css" type="text/css" />
+<link rel="stylesheet" href="styles/pygments_style.css" type="text/css" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+	<div class="main">
+		<h1>VersionOne Search</h1>
+		<h2>Introduction</h2>
+		<p>VersionOne Search (V1Search) is a standalone web application that 
+			allows individuals across your organization to search for VersionOne 
+			assets across all projects.  V1Search is built on top of 
+				<a href="http://incubator.apache.org/projects/lucene.net.html">Lucene.NET</a>,
+			a powerful open-source information retrieval engine. This technology 
+			also supports a rich query parser that allows users to create queries 
+			that mix terms, logical expressions, and wildcards to narrow their 
+			searches.</p>
+		<h2>Contents</h2>
+		<ul>
+			<li><a href='#V1Search-SystemRequirements'>System
+					Requirements</a></li>
+			<li><a href='#V1Search-Download'>Download</a></li>
+			<li><a href='#V1Search-Installation'>Installation</a></li>
+		</ul>
+		<h2>
+			<a name="V1Search-SystemRequirements"></a>System
+			Requirements
+		</h2>
+		<ul>
+			<li>Windows:
+				<ul>
+					<li>Tested with Windows 2000, 2003</li>
+				</ul>
+			</li>
+			<li>Framework:
+				<ul>
+					<li>Microsoft .NET 4.0</li>
+				</ul>
+			</li>
+			<li>Web Server:
+				<ul>
+					<li>IIS 5 or IIS 6, with ASP.Net 2.0 Service Pack 1</li>
+				</ul>
+			</li>
+			<li>VersionOne:
+				<ul>
+					<li>8.0 or above, including Team Edition</li>
+				</ul>
+			</li>
+		</ul>
+
+
+		<h2>
+			<a name="V1Search-Download"></a>Download
+		</h2>
+		<p>The latest version of V1Search is available from 
+			<a href="http://community.versionone.com/Downloads/default.aspx">the 
+				VersionOne Community site</a>
+		</p>
+
+		<h2>
+			<a name="V1Search-Installation"></a>Installation
+		</h2>
+		<ol>
+			<li>Determine Install Location
+				<p>V1Search can be installed on any web server that has internet 
+					access to your VersionOne instance. Exact placement should be 
+					determined by your internal software management requirements.
+					The integation server must meet the
+						<a href='#V1Search-SystemRequirements'>System Requirements</a> 
+					stated above.</p>
+			</li>
+			<li>Install
+				<ul>
+					<li>Download
+						<p>Download the V1Search binary zip using the link above.</p>
+					</li>
+					<li>Extract to Web Server
+						<p>Extract the contents to a location on your web server.</p>
+					</li>
+					<li>Create Virtual Directory
+						<p>Create a virtual directory in IIS that points to the folder 
+							you extracted the files to.</p>
+					</li>
+					<li>Enable ASP.NET
+						<p>Ensure that the virtual directory is using ASP.Net 2.0 
+							Service pack 1.</p>
+					</li>
+					<li>Default to index.htm
+						<p>Ensure that the default document is <code>index.htm</code>.</p>
+					</li>
+				</ul>
+			</li>
+			<li>Test the Web Application
+				<p>At this point you'll want to ensure that the Web Application is 
+					working. Open a web browser and navigate the the URL defined 
+					in the install step. You should see the VersionOne Search web 
+					page.</p>
+			</li>
+			<li>Index your VersionOne Server
+				<p>To index your server navigate the the Extractor subdirectory. 
+					From this location, you need to modify the V1Extractor.exe.
+					config file and provide your server connection information. 
+					The following table describes the parameters available to you 
+					in the configuration file.</p>
+				<table>
+					<tbody>
+						<tr>
+							<th>Parameter</th>
+							<th>Description</th>
+						</tr>
+						<tr>
+							<td>V1Server</td>
+							<td>This is the URL to your VersionOne server</td>
+						</tr>
+						<tr>
+							<td>V1User</td>
+							<td>A valid VersionOne user in the system specifed 
+								by V1Server</td>
+						</tr>
+						<tr>
+							<td>V1Password</td>
+							<td>Password for the specified user</td>
+						</tr>
+						<tr>
+							<td>IndexDir</td>
+							<td>Location for storing Lucene index</td>
+						</tr>
+					</tbody>
+				</table>
+				<p class="info">The index will only contain items the V1User has 
+					privileges to view. Therefore, if you use the admin user, then 
+					the index will contain everything. Conversely, if you choose a 
+					user that is restricted to a given project or has 
+					&quot;Inheritor&quot; access, you index may contain no data.</p>					
+			</li>
+		</ol>
+			
+	</div>
+</body>
+</html>
